@@ -63,8 +63,11 @@ module ActiveRecord
       # Supports DSN-based or DSN-less connections
       # e.g. "DSN=virt5;UID=rails;PWD=rails"
       #      "DRIVER={OpenLink Virtuoso};HOST=carlmbp;UID=rails;PWD=rails"
+      #
+      # Since we're using semicolons to split, if there's a semicolon in the password, things will break.
+      # So please escape semicolons, and the `gsub` below will add it back
       def odbc_conn_str_connection(config)
-        driver_attrs = config[:conn_str].split(';').map { |option| option.split('=', 2) }.to_h
+        driver_attrs = config[:conn_str].split(';').map { |option| option.gsub('%3B', ';').split('=', 2) }.to_h
         driver, connection = obdc_driver_connection(driver_attrs)
 
         [connection, config.merge(driver: driver)]
