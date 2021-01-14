@@ -77,6 +77,25 @@ development:
 
 To run the tests, you'll need the ODBC driver as well as the connection adapter for each database against which you're trying to test. Then run `DSN=MyDatabaseDSN bundle exec rake test` and the test suite will be run by connecting to your database.
 
+## Testing Using a Docker Container Because ODBC on Mac is Hard
+
+Tested on Sierra.
+
+
+Run from project root:
+
+```
+bundle package
+docker build -f Dockerfile.dev -t odbc-dev .
+
+# Local mount mysql directory to avoid some permissions problems
+mkdir -p /tmp/mysql
+docker run -it --rm -v $(pwd):/workspace -v /tmp/mysql:/var/lib/mysql odbc-dev:latest
+
+# In container
+docker/test.sh
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on [GitHub][github-repo].
